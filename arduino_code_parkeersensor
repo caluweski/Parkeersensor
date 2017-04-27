@@ -1,0 +1,54 @@
+int zoemerPin = 6;
+int echoPin = 12;
+int trigPin = 13;
+long tijd,afstand;
+int interval;
+
+int minimumAfstand = 10;
+
+void setup() {
+Serial.begin(9600);
+pinMode(zoemerPin,OUTPUT);
+pinMode(echoPin,INPUT);
+pinMode(trigPin,OUTPUT);
+}
+
+void loop() {
+ digitalWrite(trigPin, LOW); 
+ delayMicroseconds(2); 
+
+ digitalWrite(trigPin, HIGH);
+ delayMicroseconds(10); 
+ 
+ digitalWrite(trigPin, LOW);
+ tijd = pulseIn(echoPin, HIGH);
+ 
+ //Calculate the distance (in cm) based on the speed of sound.
+ afstand = tijd/58.2;
+
+ if (afstand > minimumAfstand)
+ {
+  interval = 2000;
+  Serial.print(afstand);
+  Serial.println(" = ");
+  Serial.println("grote afstand");
+  tone(zoemerPin, 1000);
+  delay(250);
+  noTone(zoemerPin);
+  delay(interval);
+ }
+ else
+ {
+  interval = 200;
+  Serial.print(afstand);
+  Serial.println(" = ");
+  Serial.println("kleine afstand");
+  tone(zoemerPin, 1000);
+  delay(250);
+  noTone(zoemerPin);
+  delay(interval);
+ }
+ 
+ //Delay 50ms before next reading.
+ delay(50);
+}
