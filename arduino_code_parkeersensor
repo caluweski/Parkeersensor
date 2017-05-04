@@ -1,16 +1,25 @@
 int zoemerPin = 6;
-int echoPin = 12;
-int trigPin = 13;
+int echoPin = 7;
+int trigPin = 8;
 long tijd,afstand;
 int interval;
 
 int minimumAfstand = 10;
+
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
 
 void setup() {
 Serial.begin(9600);
 pinMode(zoemerPin,OUTPUT);
 pinMode(echoPin,INPUT);
 pinMode(trigPin,OUTPUT);
+
+// set up the LCD's number of columns and rows:
+lcd.begin(16, 2);
+// Print a message to the LCD.
+lcd.print("Parkeersensor");
 }
 
 void loop() {
@@ -23,15 +32,15 @@ void loop() {
  digitalWrite(trigPin, LOW);
  tijd = pulseIn(echoPin, HIGH);
  
- //Calculate the distance (in cm) based on the speed of sound.
+ //Bereken de afstand (in cm) op basis van de snelheid van geluid.
  afstand = tijd/58.2;
 
  if (afstand > minimumAfstand)
  {
   interval = 2000;
   Serial.print(afstand);
-  Serial.println(" = ");
-  Serial.println("grote afstand");
+  Serial.print("cm (= ");
+  Serial.println("ver)");
   tone(zoemerPin, 1000);
   delay(250);
   noTone(zoemerPin);
@@ -41,14 +50,19 @@ void loop() {
  {
   interval = 200;
   Serial.print(afstand);
-  Serial.println(" = ");
-  Serial.println("kleine afstand");
+  Serial.print("cm (= ");
+  Serial.println("dicht)");
   tone(zoemerPin, 1000);
   delay(250);
   noTone(zoemerPin);
   delay(interval);
  }
  
- //Delay 50ms before next reading.
+ //Vertraging ifv volgende meting.
  delay(50);
+    //data lezen
+      lcd.setCursor(0,1);
+      lcd.print(afstand);
+      lcd.print("cm");
+
 }
